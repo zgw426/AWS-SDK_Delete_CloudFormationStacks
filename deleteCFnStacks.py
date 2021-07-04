@@ -18,7 +18,7 @@ parser = argparse.ArgumentParser(description=helpStr)
 parser.add_argument('-f', '--Filter', required=True)
 parser.add_argument('-d', '--DryRun', default=True)
 
-blockList = "delCfnStacks_BlockList.json"
+blockList = "deleteCfnStacks_BlockList.json"
 json_open = open(blockList, 'r', encoding='utf-8')
 blklist = json.load(json_open)
 
