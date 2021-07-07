@@ -11,7 +11,7 @@
 
 |ファイル名|概要|
 |---|---|
-|deleteCFnStacks.py|スクリプト本体|
+|deleteCfnStacks.py|スクリプト本体|
 |deleteCfnStacks_BlockList.json|削除しないスタックの条件を設定|
 
 ## スクリプト実行方法
@@ -63,12 +63,7 @@ PS C:\Users\user01\test> python deleteCFnStacks.py -f test
 
 ## 実行時に表示されるメッセージ例
 
-Name `test` で始まるスタック名を削除対象にした場合、ブロックリストに含まれるスタックは削除できない。
-
-- 例１）
-  - ブロックリスト(Date)により、`test001-subnet1`スタックが削除されず
-  - ブロックリスト(StackName)により、`test001-vpc`スタックが削除されず
-  - Dry-runが有効なため、`test001-sg`スタックは削除されず
+### 例１）
 
 ```
 PS C:\Users\user01\test> python deleteCFnStacks.py -f test
@@ -82,10 +77,15 @@ Python Version Check [OK] : sys.version_info(major=3, minor=9, micro=5, releasel
 PS C:\Users\user01\test>
 ```
 
-- 例２）
-  - ブロックリスト(Date)により、`test001-subnet1`スタックが削除されず
-  - ブロックリスト(StackName)により、`test001-vpc`スタックが削除されず
-  - Dry-runが無効なため、`test001-sg`スタックを削除
+- 説明
+    - `test`から始まるスタック名が対象になる
+    - `-d False`オプションが無いためスタック削除しない(Dry-run有効)
+    - ブロックリスト(Date)により、`test001-subnet1`スタックは削除しない
+    - ブロックリスト(StackName)により、`test001-vpc`スタックは削除しない
+    - スタック名 `test001-sg`が削除対象として選定された(Dry-runのため削除しない)
+
+
+### 例２）
 
 ```
 PS C:\Users\user01\test> python deleteCFnStacks.py -f test -d False
@@ -99,3 +99,7 @@ Python Version Check [OK] : sys.version_info(major=3, minor=9, micro=5, releasel
 [LOG] CFn Delete Stack [test001-sg] end.
 PS C:\Users\user01\test>
 ```
+
+- 説明
+    - 例１に`-d False`オプションを追記して実行
+    - `-d False`オプションが有るためスタック削除する(Dry-run無効)
