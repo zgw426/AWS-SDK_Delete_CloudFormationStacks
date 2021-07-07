@@ -44,26 +44,42 @@ for stack in stacks['StackSummaries']:
     for keyVal in blklist['StackName']:
         if stack['StackName'].startswith(keyVal) == True:
             blkKeyFlg = 1
-            addFlg = 0
-            print("[BLOCK(StackName)] {0} は、ブロックリストによりブロックされました".format(stack['StackName']) )
+            #if addFlg == 1:
+            #    print("[BLOCK(StackName)] {0} は、ブロックリストによりブロックされました".format(stack['StackName']) )
+            #addFlg = 0
     for dateVal in blklist['Date']:
         DateStart = dt.strptime(str(dateVal["Start"]) , '%Y-%m-%d %H:%M:%S')
         DateEnd   = dt.strptime(str(dateVal["End"]) , '%Y-%m-%d %H:%M:%S')
         if DateStart <= datetime <= DateEnd:
             blkDateFlg = 1
+            #if addFlg == 1:
+            #    print("[BLOCK(Date)] {0} は、ブロックリストによりブロックされました".format(stack['StackName']) )
+    if blkKeyFlg + blkDateFlg > 0:
+        if addFlg == 1:
             addFlg = 0
-            print("[BLOCK(Date)] {0} は、ブロックリストによりブロックされました".format(stack['StackName']) )
+            if blkKeyFlg == 1:
+                print("[BLOCK(StackName)] {0} は、ブロックリストによりブロックされました".format(stack['StackName']) )
+            if blkDateFlg == 1:
+                print("[BLOCK(Date)] {0} は、ブロックリストによりブロックされました".format(stack['StackName']) )
 
     if addFlg == 1:
         tgtStr = [ datetime, stack['StackName'] ]
         tgtlist.append( tgtStr )
 
+
+
+## (念のため)削除対象のスタックを作成日時で降順にソート
+tgtlist = sorted(tgtlist, key=lambda s: s[0], reverse=True)
+
 # Dry-Run
 if dryrunFlg == True:
-    print("[Dry-run:ON] スタック削除は実行しません")
-    print("■-- 選定されたスタック --■")
-    for stack in tgtlist:
-        print("{0} {1}".format(stack[0], stack[1]) )
+    if len(tgtlist) > 0:
+        print("[Dry-run:ON] スタック削除は実行しません")
+        print("■-- 選定されたスタック --■\n作成日時 | スタック名")
+        for stack in tgtlist:
+            print("{0} {1}".format(stack[0], stack[1]) )
+    else:
+        print("\tTarget Stack not Found")
     print("■------------------------■")
 else:
     print("[Dry-run:OFF] スタック削除を実行します")
@@ -76,3 +92,4 @@ else:
         waiter = client.get_waiter('stack_delete_complete')
         waiter.wait(StackName=stack[1]) # スタック削除完了まで待つ
         print("[LOG] CFn Delete Stack [{0}] end.".format(stack[1])) # スタック完了後に実行される処理
+
